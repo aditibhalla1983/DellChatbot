@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dell Support — AI Assistant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:#f4f6fa;color:#1a1a2e;font-size:14px;}
+
+  .nav{background:#fff;border-bottom:1px solid #e0e0e0;padding:0 40px;display:flex;align-items:center;height:56px;gap:32px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+  .nav-logo{font-size:22px;font-weight:800;color:#0076CE;letter-spacing:1px;}
+  .nav-links{display:flex;gap:24px;}
+  .nav-link{font-size:13px;color:#444;cursor:pointer;padding:4px 0;border-bottom:2px solid transparent;}
+  .nav-link:hover,.nav-link.active{color:#0076CE;border-bottom-color:#0076CE;font-weight:600;}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:16px;}
+  .nav-btn{background:#0076CE;color:#fff;font-size:12px;font-weight:600;padding:7px 16px;border-radius:6px;cursor:pointer;border:none;}
+
+  .hero{background:linear-gradient(135deg,#0076CE,#004B8D);color:#fff;padding:40px 60px 36px;}
+  .hero h1{font-size:26px;font-weight:700;margin-bottom:6px;}
+  .hero p{font-size:14px;opacity:0.85;max-width:500px;}
+  .breadcrumb{font-size:11px;opacity:0.65;margin-bottom:14px;}
+
+  .page-body{max-width:1100px;margin:0 auto;padding:32px 40px 120px;display:grid;grid-template-columns:1fr 300px;gap:28px;}
+
+  .tabs{display:flex;gap:4px;margin-bottom:20px;background:#fff;border-radius:10px;padding:6px;box-shadow:0 1px 3px rgba(0,0,0,0.07);}
+  .tab{flex:1;text-align:center;padding:8px 4px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:#666;transition:all 0.2s;}
+  .tab.active{background:#0076CE;color:#fff;}
+  .tab:hover:not(.active){background:#f0f4fb;color:#0076CE;}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+  .support-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.07);cursor:pointer;border:2px solid transparent;transition:all 0.2s;}
+  .support-card:hover{border-color:#0076CE;transform:translateY(-2px);}
+  .sc-icon{font-size:26px;margin-bottom:8px;}
+  .sc-title{font-size:13px;font-weight:700;margin-bottom:3px;}
+  .sc-desc{font-size:11px;color:#666;}
+
+  .sec-title{font-size:16px;font-weight:700;margin-bottom:14px;}
+  .order-card{background:#fff;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.07);margin-bottom:12px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border 0.2s;border:2px solid transparent;}
+  .order-card:hover{border-color:#0076CE;}
+  .oc-icon{font-size:28px;}
+  .oc-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+  .oc-sub{font-size:11px;color:#888;}
+  .oc-status{margin-left:auto;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .oc-status.shipped{background:#F0FBF5;color:#00A86B;}
+  .oc-status.processing{background:#EEF6FF;color:#0076CE;}
+  .oc-status.delivered{background:#f0f2f7;color:#555;}
+
+  .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .product-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.07);cursor:pointer;transition:all 0.2s;border:2px solid transparent;}
+  .product-card:hover{border-color:#0076CE;transform:translateY(-2px);}
+  .pc-img{font-size:36px;text-align:center;margin-bottom:10px;}
+  .pc-name{font-size:12px;font-weight:700;margin-bottom:4px;}
+  .pc-price{font-size:13px;font-weight:800;color:#0076CE;margin-bottom:4px;}
+  .pc-spec{font-size:10px;color:#888;line-height:1.5;}
+
+  .warranty-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .warranty-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.07);border-top:3px solid #0076CE;cursor:pointer;transition:all 0.2s;}
+  .warranty-card:hover{transform:translateY(-2px);}
+  .warranty-card.premium{border-top-color:#D4800A;}
+  .wc-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+  .wc-price{font-size:16px;font-weight:800;color:#0076CE;margin-bottom:8px;}
+  .wc-price.premium{color:#D4800A;}
+  .wc-feature{font-size:11px;color:#555;padding:3px 0;border-bottom:1px solid #f4f6fa;display:flex;gap:6px;}
+  .wc-feature:last-child{border-bottom:none;}
+
+  .tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .tech-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.07);cursor:pointer;transition:all 0.2s;text-align:center;border:2px solid transparent;}
+  .tech-card:hover{border-color:#7C3AED;transform:translateY(-2px);}
+  .tech-icon{font-size:28px;margin-bottom:8px;}
+  .tech-title{font-size:12px;font-weight:700;margin-bottom:3px;}
+  .tech-desc{font-size:11px;color:#666;}
+
+  .recycle-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .recycle-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.07);cursor:pointer;transition:all 0.2s;border:2px solid transparent;border-left:4px solid #059669;}
+  .recycle-card:hover{border-color:#059669;transform:translateY(-2px);}
+  .rc-icon{font-size:24px;margin-bottom:8px;}
+  .rc-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+  .rc-desc{font-size:11px;color:#666;}
+
+  .sidebar{display:flex;flex-direction:column;gap:14px;}
+  .sidebar-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.07);}
+  .sb-title{font-size:12px;font-weight:700;margin-bottom:10px;color:#1a1a2e;}
+  .sb-link{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f4f6fa;font-size:12px;color:#0076CE;cursor:pointer;}
+  .sb-link:last-child{border-bottom:none;}
+
+  .chat-fab{position:fixed;bottom:28px;right:28px;z-index:1000;width:56px;height:56px;background:#0076CE;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,118,206,0.4);transition:all 0.2s;}
+  .chat-fab:hover{transform:scale(1.07);background:#005fa3;}
+  .chat-fab svg{width:26px;height:26px;fill:#fff;}
+  .chat-notif{position:absolute;top:-4px;right:-4px;background:#FF4444;color:#fff;font-size:9px;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;}
+
+  .chat-window{position:fixed;bottom:96px;right:28px;width:390px;height:600px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.18);display:flex;flex-direction:column;z-index:1000;overflow:hidden;transform:scale(0.9);opacity:0;pointer-events:none;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);transform-origin:bottom right;}
+  .chat-window.open{transform:scale(1);opacity:1;pointer-events:all;}
+
+  .chat-header{background:linear-gradient(135deg,#0076CE,#004B8D);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .ch-avatar{width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .ch-name{font-size:13px;font-weight:700;}
+  .ch-status{font-size:10px;opacity:0.8;display:flex;align-items:center;gap:4px;}
+  .ch-dot{width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block;}
+  .ch-close{margin-left:auto;cursor:pointer;opacity:0.8;font-size:18px;}
+  .ch-close:hover{opacity:1;}
+  .context-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:8px;}
+
+  .chat-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8f9fc;}
+  .chat-body::-webkit-scrollbar{width:4px;}
+  .chat-body::-webkit-scrollbar-thumb{background:#ddd;border-radius:4px;}
+
+  .msg{display:flex;gap:8px;align-items:flex-end;max-width:92%;}
+  .msg.bot{align-self:flex-start;}
+  .msg.user{align-self:flex-end;flex-direction:row-reverse;}
+  .msg-avatar{width:26px;height:26px;background:#0076CE;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff;}
+  .msg-bubble{padding:9px 13px;border-radius:13px;font-size:12.5px;line-height:1.55;}
+  .msg.bot .msg-bubble{background:#fff;color:#1a1a2e;border-radius:4px 13px 13px 13px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .msg.user .msg-bubble{background:#0076CE;color:#fff;border-radius:13px 4px 13px 13px;}
+  .msg-time{font-size:10px;color:#bbb;margin-top:2px;}
+  .msg.bot .msg-time{margin-left:34px;}
+  .msg.user .msg-time{text-align:right;}
+
+  .quick-replies{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px;padding-left:34px;}
+  .qr-btn{background:#fff;border:1.5px solid #0076CE;color:#0076CE;font-size:11px;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}
+  .qr-btn:hover{background:#0076CE;color:#fff;}
+
+  .typing{display:flex;gap:8px;align-items:center;align-self:flex-start;}
+  .typing-bubble{background:#fff;padding:11px 15px;border-radius:4px 13px 13px 13px;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:flex;gap:4px;align-items:center;}
+  .typing-dot{width:6px;height:6px;background:#bbb;border-radius:50%;animation:bounce 1.2s infinite;}
+  .typing-dot:nth-child(2){animation-delay:0.2s;}
+  .typing-dot:nth-child(3){animation-delay:0.4s;}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+  .chat-footer{padding:10px 12px;border-top:1px solid #f0f2f7;background:#fff;flex-shrink:0;}
+  .chat-input-row{display:flex;gap:8px;align-items:center;}
+  .chat-input{flex:1;border:1px solid #e0e0e0;border-radius:24px;padding:8px 15px;font-size:12.5px;font-family:'Inter',sans-serif;outline:none;transition:border 0.15s;resize:none;max-height:70px;}
+  .chat-input:focus{border-color:#0076CE;}
+  .chat-send{width:34px;height:34px;background:#0076CE;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .chat-send:hover{background:#005fa3;}
+  .chat-send svg{width:15px;height:15px;fill:#fff;}
+  .chat-hint{font-size:10px;color:#bbb;text-align:center;margin-top:5px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">DELL</div>
+  <div class="nav-links">
+    <div class="nav-link" onclick="switchTab('new-purchase')">Products</div>
+    <div class="nav-link active" id="nav-support" onclick="switchTab('order-support')">Support</div>
+    <div class="nav-link">For Business</div>
+    <div class="nav-link" onclick="switchTab('recycling')">Sustainability</div>
+  </div>
+  <div class="nav-right">
+    <div style="font-size:13px;color:#444;cursor:pointer;">🔍</div>
+    <div style="font-size:13px;color:#444;cursor:pointer;">🛒 Cart (1)</div>
+    <button class="nav-btn">Sign In</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="breadcrumb" id="breadcrumb">Home › Support</div>
+  <h1 id="hero-title">How can we help you today?</h1>
+  <p id="hero-desc">Get instant answers about your orders, returns, billing, technical support, recycling and more — no waiting on hold.</p>
+</div>
+
+<div class="page-body">
+  <div>
+    <div class="tabs">
+      <div class="tab active" id="tab-order-support" onclick="switchTab('order-support')">📦 Order Support</div>
+      <div class="tab" id="tab-new-purchase" onclick="switchTab('new-purchase')">🛍️ New Purchase</div>
+      <div class="tab" id="tab-warranty" onclick="switchTab('warranty')">🛡️ Warranty</div>
+      <div class="tab" id="tab-tech-support" onclick="switchTab('tech-support')">🔧 Tech Support</div>
+      <div class="tab" id="tab-recycling" onclick="switchTab('recycling')">♻️ Recycling</div>
+    </div>
+
+    <!-- ORDER SUPPORT -->
+    <div class="panel active" id="panel-order-support">
+      <div class="sec-title">Order Support</div>
+      <div class="support-grid">
+        <div class="support-card" onclick="openChatWith('I want to track my order status','Order Support')"><div class="sc-icon">📦</div><div class="sc-title">Track My Order</div><div class="sc-desc">Real-time status, shipping updates and tracking</div></div>
+        <div class="support-card" onclick="openChatWith('I want to return a product','Order Support')"><div class="sc-icon">🔄</div><div class="sc-title">Returns & Replacements</div><div class="sc-desc">Start a return, check eligibility, report damaged item</div></div>
+        <div class="support-card" onclick="openChatWith('I have a billing question','Order Support')"><div class="sc-icon">💳</div><div class="sc-title">Billing Support</div><div class="sc-desc">Understand charges, payment methods, disputes</div></div>
+        <div class="support-card" onclick="openChatWith('I want to cancel my order','Order Support')"><div class="sc-icon">❌</div><div class="sc-title">Cancel an Order</div><div class="sc-desc">Check cancellation eligibility and next steps</div></div>
+        <div class="support-card" onclick="openChatWith('I want to modify my existing order','Order Support')"><div class="sc-icon">✏️</div><div class="sc-title">Modify an Order</div><div class="sc-desc">Change address, quantity or items before shipment</div></div>
+        <div class="support-card" onclick="openChatWith('I received a damaged item','Order Support')"><div class="sc-icon">⚠️</div><div class="sc-title">Damaged / Wrong Item</div><div class="sc-desc">Get immediate help for delivery issues</div></div>
+        <div class="support-card" onclick="openChatWith('What are the order support policies?','Order Support')"><div class="sc-icon">📋</div><div class="sc-title">Order Policies</div><div class="sc-desc">Return window, cancellation rules, shipping policy</div></div>
+        <div class="support-card" onclick="openChatWith('I want to request a sales callback','Order Support')"><div class="sc-icon">📞</div><div class="sc-title">Request Sales Callback</div><div class="sc-desc">Schedule a call with our sales team at your convenience</div></div>
+        <div class="support-card" onclick="openChatWith('I want to talk to a live agent','Order Support')"><div class="sc-icon">🎧</div><div class="sc-title">Talk to an Agent</div><div class="sc-desc">Connect with our team for complex issues</div></div>
+      </div>
+      <div class="sec-title">Your Recent Orders</div>
+      <div class="order-card" onclick="openChatWith('Can you check the status of order DEL-884521','Order Support')"><div class="oc-icon">💻</div><div><div class="oc-title">Dell XPS 15 Laptop</div><div class="oc-sub">Order #DEL-884521 · Placed Mar 8, 2026</div></div><div class="oc-status shipped">Shipped</div></div>
+      <div class="order-card" onclick="openChatWith('What is the status of order DEL-871203','Order Support')"><div class="oc-icon">🖥️</div><div><div class="oc-title">Dell UltraSharp 27" Monitor</div><div class="oc-sub">Order #DEL-871203 · Placed Feb 20, 2026</div></div><div class="oc-status delivered">Delivered</div></div>
+      <div class="order-card" onclick="openChatWith('Check status of order DEL-862990','Order Support')"><div class="oc-icon">⌨️</div><div><div class="oc-title">Dell Pro Wireless Keyboard</div><div class="oc-sub">Order #DEL-862990 · Placed Feb 1, 2026</div></div><div class="oc-status processing">Processing</div></div>
+    </div>
+
+    <!-- NEW PURCHASE -->
+    <div class="panel" id="panel-new-purchase">
+      <div class="sec-title">Browse & Buy</div>
+      <div class="support-grid" style="margin-bottom:20px;">
+        <div class="support-card" onclick="openChatWith('What are the latest Dell laptop models?','New Purchase')"><div class="sc-icon">💻</div><div class="sc-title">Latest Models</div><div class="sc-desc">Discover Dell's newest laptops and desktops</div></div>
+        <div class="support-card" onclick="openChatWith('Help me find a laptop that meets my specifications','New Purchase')"><div class="sc-icon">🔍</div><div class="sc-title">Find by Spec</div><div class="sc-desc">Tell us what you need — we'll match the right model</div></div>
+        <div class="support-card" onclick="openChatWith('Compare Dell XPS 15 vs Dell Inspiron 15','New Purchase')"><div class="sc-icon">⚖️</div><div class="sc-title">Compare Models</div><div class="sc-desc">Side-by-side comparison of two Dell models</div></div>
+        <div class="support-card" onclick="openChatWith('Show me laptops under $1000','New Purchase')"><div class="sc-icon">💰</div><div class="sc-title">Shop by Budget</div><div class="sc-desc">Find the best Dell within your price range</div></div>
+        <div class="support-card" onclick="openChatWith('What promotions and discounts are available right now?','New Purchase')"><div class="sc-icon">🏷️</div><div class="sc-title">Deals & Promotions</div><div class="sc-desc">Current offers, student discounts and sale events</div></div>
+        <div class="support-card" onclick="openChatWith('What customisation options are available for XPS 15?','New Purchase')"><div class="sc-icon">⚙️</div><div class="sc-title">Customise a Model</div><div class="sc-desc">Configure RAM, storage, processor and more</div></div>
+      </div>
+      <div class="sec-title">Featured Products</div>
+      <div class="product-grid">
+        <div class="product-card" onclick="openChatWith('Tell me about the Dell XPS 15 and how to buy it','New Purchase')"><div class="pc-img">💻</div><div class="pc-name">Dell XPS 15</div><div class="pc-price">From $1,299</div><div class="pc-spec">Intel Core i7 · 16GB RAM<br>512GB SSD · 15.6" OLED</div></div>
+        <div class="product-card" onclick="openChatWith('Tell me about the Dell Inspiron 14 and how to buy it','New Purchase')"><div class="pc-img">🖥️</div><div class="pc-name">Dell Inspiron 14</div><div class="pc-price">From $649</div><div class="pc-spec">Intel Core i5 · 8GB RAM<br>256GB SSD · 14" FHD</div></div>
+        <div class="product-card" onclick="openChatWith('Tell me about the Dell Alienware m18 and how to buy it','New Purchase')"><div class="pc-img">🎮</div><div class="pc-name">Alienware m18</div><div class="pc-price">From $2,499</div><div class="pc-spec">Intel Core i9 · 32GB RAM<br>1TB SSD · RTX 4090</div></div>
+      </div>
+    </div>
+
+    <!-- WARRANTY -->
+    <div class="panel" id="panel-warranty">
+      <div class="sec-title">Warranty Services</div>
+      <div class="support-grid" style="margin-bottom:20px;">
+        <div class="support-card" onclick="openChatWith('What is the status of my current warranty for order DEL-884521','Warranty')"><div class="sc-icon">🔍</div><div class="sc-title">Check Warranty Status</div><div class="sc-desc">Find out when your coverage expires</div></div>
+        <div class="support-card" onclick="openChatWith('What warranty renewal plans are available?','Warranty')"><div class="sc-icon">📋</div><div class="sc-title">View Renewal Plans</div><div class="sc-desc">Compare coverage options and pricing</div></div>
+        <div class="support-card" onclick="openChatWith('I want to renew my warranty','Warranty')"><div class="sc-icon">🔄</div><div class="sc-title">Renew My Warranty</div><div class="sc-desc">Start the renewal process for your device</div></div>
+        <div class="support-card" onclick="openChatWith('What payment methods are accepted for warranty renewal?','Warranty')"><div class="sc-icon">💳</div><div class="sc-title">Payment Options</div><div class="sc-desc">Accepted payment methods for renewal</div></div>
+      </div>
+      <div class="sec-title">Renewal Plans</div>
+      <div class="warranty-grid">
+        <div class="warranty-card" onclick="openChatWith('Tell me more about Dell Basic warranty plan and how to purchase it','Warranty')"><div class="wc-name">Basic Care</div><div class="wc-price">$49 / year</div><div class="wc-feature"><span>✓</span> Hardware defect coverage</div><div class="wc-feature"><span>✓</span> Phone & online support</div><div class="wc-feature"><span>✓</span> Next business day parts</div><div class="wc-feature"><span style="color:#ccc">✗</span> On-site technician</div></div>
+        <div class="warranty-card premium" onclick="openChatWith('Tell me more about Dell Premium warranty plan and how to purchase it','Warranty')"><div class="wc-name">Premium Care Plus</div><div class="wc-price premium">$149 / year</div><div class="wc-feature"><span>✓</span> Hardware + accidental damage</div><div class="wc-feature"><span>✓</span> 24/7 priority support</div><div class="wc-feature"><span>✓</span> Same-day on-site technician</div><div class="wc-feature"><span>✓</span> Data recovery service</div></div>
+      </div>
+    </div>
+
+    <!-- TECH SUPPORT -->
+    <div class="panel" id="panel-tech-support">
+      <div class="sec-title">Technical Support</div>
+      <div class="tech-grid">
+        <div class="tech-card" onclick="openChatWith('My Dell laptop is having a problem, help me troubleshoot it','Technical Support')"><div class="tech-icon">🔧</div><div class="tech-title">Device Troubleshooting</div><div class="tech-desc">Step-by-step guided diagnosis for any issue</div></div>
+        <div class="tech-card" onclick="openChatWith('I am seeing an error message on my Dell laptop, can you help?','Technical Support')"><div class="tech-icon">⚠️</div><div class="tech-title">Error Message Help</div><div class="tech-desc">Decode error codes and get instant fixes</div></div>
+        <div class="tech-card" onclick="openChatWith('How do I check for and install software updates on my Dell?','Technical Support')"><div class="tech-icon">🔄</div><div class="tech-title">Software Updates</div><div class="tech-desc">BIOS, drivers and OS update guidance</div></div>
+        <div class="tech-card" onclick="openChatWith('I need help installing or updating a device driver','Technical Support')"><div class="tech-icon">💾</div><div class="tech-title">Driver Installation</div><div class="tech-desc">Find and install the right drivers for your device</div></div>
+        <div class="tech-card" onclick="openChatWith('My Dell laptop WiFi is not working, help me fix it','Technical Support')"><div class="tech-icon">📶</div><div class="tech-title">Network & WiFi Issues</div><div class="tech-desc">Fix connectivity problems step by step</div></div>
+        <div class="tech-card" onclick="openChatWith('How do I speed up my Dell laptop performance?','Technical Support')"><div class="tech-icon">⚡</div><div class="tech-title">Performance Tips</div><div class="tech-desc">Safe ways to speed up your Dell device</div></div>
+      </div>
+      <div style="background:#FFF3CD;border-radius:10px;padding:14px 18px;margin-top:20px;font-size:12px;color:#856404;border:1px solid #FFE08A;">⚠️ <strong>Safety Note:</strong> Our AI assistant provides guided troubleshooting steps one at a time. For complex hardware issues, it will connect you to a certified Dell technician.</div>
+    </div>
+
+    <!-- RECYCLING -->
+    <div class="panel" id="panel-recycling">
+      <div class="sec-title">Dell Recycling Program</div>
+      <div style="background:linear-gradient(135deg,#059669,#047857);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px;">♻️ Recycle Responsibly with Dell</div>
+        <div style="font-size:12px;opacity:0.85;margin-bottom:14px;">Dell has recycled over 2 billion pounds of electronics since 2007. Join us in building a more sustainable future.</div>
+        <div style="background:rgba(255,255,255,0.15);display:inline-block;font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer;" onclick="openChatWith('Tell me about Dell recycling programs','Recycling')">Learn More →</div>
+      </div>
+      <div class="recycle-grid">
+        <div class="recycle-card" onclick="openChatWith('How do I recycle my Dell laptop?','Recycling')"><div class="rc-icon">💻</div><div class="rc-title">Recycle a Laptop</div><div class="rc-desc">Mail-back, drop-off and trade-in options for laptops</div></div>
+        <div class="recycle-card" onclick="openChatWith('How do I recycle my Dell desktop?','Recycling')"><div class="rc-icon">🖥️</div><div class="rc-title">Recycle a Desktop</div><div class="rc-desc">Free recycling options for desktops and monitors</div></div>
+        <div class="recycle-card" onclick="openChatWith('Are there any incentives or trade-in credits for recycling?','Recycling')"><div class="rc-icon">🎁</div><div class="rc-title">Recycling Incentives</div><div class="rc-desc">Trade-in credits and discounts on your next purchase</div></div>
+        <div class="recycle-card" onclick="openChatWith('Find nearest Dell recycling drop-off location near me','Recycling')"><div class="rc-icon">📍</div><div class="rc-title">Find Drop-Off Location</div><div class="rc-desc">Nearest recycling centres near your location</div></div>
+        <div class="recycle-card" onclick="openChatWith('How does Dell protect my data when I recycle my device?','Recycling')"><div class="rc-icon">🔒</div><div class="rc-title">Data Security Assurance</div><div class="rc-desc">How Dell certifiably destroys your data before recycling</div></div>
+        <div class="recycle-card" onclick="openChatWith('Tell me about Dell business recycling and bulk equipment disposal','Recycling')"><div class="rc-icon">🏢</div><div class="rc-title">Business Recycling</div><div class="rc-desc">Bulk and enterprise asset recovery programs</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="sb-title">Quick Links</div>
+      <div class="sb-link" onclick="openChatWith('Track my order','Order Support')">📦 Track an Order</div>
+      <div class="sb-link" onclick="openChatWith('I want to return a product','Order Support')">🔄 Start a Return</div>
+      <div class="sb-link" onclick="openChatWith('Check my warranty status','Warranty')">🛡️ Warranty Status</div>
+      <div class="sb-link" onclick="openChatWith('My device is not working properly','Technical Support')">🔧 Tech Support</div>
+      <div class="sb-link" onclick="openChatWith('How do I recycle my Dell device?','Recycling')">♻️ Recycle a Device</div>
+    </div>
+    <div class="sidebar-card" style="background:#EEF6FF;border:1px solid #BFD9F5;">
+      <div style="font-size:13px;font-weight:700;color:#0076CE;margin-bottom:6px;">💬 AI Assistant Online</div>
+      <div style="font-size:11px;color:#333;line-height:1.6;margin-bottom:12px;">Get answers across all 5 support areas — orders, purchases, warranty, tech help, and recycling.</div>
+      <div style="background:#0076CE;color:#fff;font-size:12px;font-weight:600;padding:8px;border-radius:8px;text-align:center;cursor:pointer;" onclick="openChat()">Start Chat →</div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sb-title">Support Hours</div>
+      <div style="font-size:11px;color:#555;line-height:1.9;">Mon–Fri: 7AM – 11PM ET<br>Sat–Sun: 9AM – 8PM ET<br><span style="color:#00A86B;font-weight:600;">● AI Chat: 24/7</span></div>
+    </div>
+    <div class="sidebar-card" style="border-left:3px solid #059669;">
+      <div class="sb-title" style="color:#059669;">♻️ Sustainability</div>
+      <div style="font-size:11px;color:#555;line-height:1.7;">Dell has recycled <strong>2B+ lbs</strong> of electronics. Our goal: <strong>net zero</strong> by 2050.</div>
+      <div style="margin-top:10px;font-size:11px;font-weight:600;color:#059669;cursor:pointer;" onclick="switchTab('recycling')">Learn about our programs →</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT FAB -->
+<div class="chat-fab" id="chatFab" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+  <div class="chat-notif" id="chatNotif">1</div>
+</div>
+
+<!-- CHAT WINDOW -->
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="ch-avatar">🤖</div>
+    <div style="flex:1;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="ch-name">Dell Virtual Assistant</div>
+        <div class="context-badge" id="contextBadge" style="display:none;"></div>
+      </div>
+      <div class="ch-status"><span class="ch-dot"></span> Online · All 5 support areas</div>
+    </div>
+    <div class="ch-close" onclick="toggleChat()">✕</div>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-footer">
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask me anything about your order, products, warranty, tech issues or recycling..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="chat-send" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+    <div class="chat-hint">🔒 Secured · Powered by Dell AI · <span style="color:#0076CE;cursor:pointer;">Privacy Policy</span></div>
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are Dell's AI Virtual Assistant embedded on Dell.com. You are knowledgeable across ALL 5 support areas. Always be warm, concise, and professional.
+
+YOUR 5 SUPPORT AREAS:
+
+━━━ 1. ORDER SUPPORT ━━━
+Mock orders:
+- DEL-884521: Dell XPS 15 Laptop · Placed Mar 8, 2026 · Status: Shipped via FedEx · Tracking: FX-928374651 · ETA: Mar 14, 2026
+- DEL-871203: Dell UltraSharp Monitor · Placed Feb 20, 2026 · Status: Delivered Feb 25, 2026
+- DEL-862990: Dell Keyboard · Placed Feb 1, 2026 · Status: Processing · ETA: Mar 16, 2026
+
+Return policy: 30-day window from order date. Today is March 13, 2026.
+- DEL-884521 (Mar 8): Eligible (5 days old)
+- DEL-871203 (Feb 20): Eligible (21 days old)
+- DEL-862990 (Feb 1): NOT eligible (40 days old) — offer warranty path
+
+Cancellation: Only possible if status is Processing. DEL-862990 can be cancelled. Others cannot.
+IDENTITY VERIFICATION RULES (US-102 — STRICT):
+- To look up any order, ONLY ask for: order number + registered email address.
+- NEVER ask for: password, full credit card number, CVV, date of birth, social security number, or any other sensitive credential.
+- If a customer volunteers a password or card number unprompted, do NOT acknowledge or use it. Instead say: "For your security, please never share passwords or card details in chat. I only need your order number and email to help you."
+- On a mismatch (order number + email don't match): show a clear, friendly error and allow exactly 1 retry before escalating to a live agent.
+- Session context expires after 30 minutes of inactivity — if customer returns after that, re-prompt for order number + email only.
+
+Missing/Damaged items: Always empathise first, then immediately escalate to live agent.
+Billing FAQs: Double charges = auth hold + final charge (releases 3-5 days). Card charged when shipped.
+Live agent wait time: 4 minutes. Business hours: Mon-Fri 7AM-11PM ET, Sat-Sun 9AM-8PM ET. Current time: 2PM ET Friday — agents ARE available.
+
+━━━ 2. NEW PURCHASE ━━━
+Latest laptops: XPS 15 ($1,299), Inspiron 14 ($649), Alienware m18 ($2,499), Latitude 5540 ($899)
+Spec matching: Ask about RAM, processor, storage, screen size, use case (gaming/business/student/creative)
+Comparison: Provide side-by-side for any two models mentioned
+Budget shopping: Always recommend top 3 value options in range
+Current promotions: 15% student discount with .edu email · $200 off Alienware through Mar 31 · Free upgrade to 16GB RAM on XPS models
+Customisation: RAM (8/16/32/64GB), Storage (256GB/512GB/1TB/2TB), Processor (i5/i7/i9/Ryzen)
+Order placement: Provide "Add to Cart" link guidance. Hand off to checkout — never collect payment.
+
+━━━ 3. WARRANTY ━━━
+Warranty status: DEL-884521 — 1-year Basic warranty, expires Mar 8, 2027 (active). DEL-871203 — expires Feb 20, 2026 (EXPIRED — proactively offer renewal). DEL-862990 — expires Feb 1, 2027 (active).
+Plans: Basic Care ($49/yr — hardware defects, phone support, next-day parts). Premium Care Plus ($149/yr — adds accidental damage, 24/7 priority support, on-site technician, data recovery).
+Auto-renewal: Explain it's opt-in only. Never enabled by default.
+Payment methods: Visa, Mastercard, Amex, PayPal, Dell Financing, gift cards.
+Renewal process: Select plan → handoff to payment gateway → active within 24h of payment. Never collect card details in chat.
+
+━━━ 4. TECHNICAL SUPPORT ━━━
+IMPORTANT: Present troubleshooting steps ONE AT A TIME. Always wait for customer to confirm before proceeding.
+Common issues you can help with:
+- Slow performance: Check startup apps, run disk cleanup, update drivers, use SupportAssist
+- WiFi issues: Restart adapter → update network driver → forget and reconnect network → reset TCP/IP
+- Blue screen (BSOD): Note error code → run memory diagnostic → check for driver updates → run SFC /scannow
+- Driver issues: Identify device → go to dell.com/support → enter service tag → download correct driver
+- Software updates: Use Dell Update app or SupportAssist for automated scanning
+Always recommend Dell SupportAssist as primary tool. Escalate to tech specialist if steps don't resolve.
+NEVER recommend registry edits or unsafe third-party tools.
+OS reinstall: ALWAYS warn about data loss first and get explicit confirmation before providing steps.
+
+━━━ 5. RECYCLING ━━━
+Programs: Mail-back (free prepaid label) · Drop-off at Best Buy and Staples nationwide · Trade-in for credit
+Data security: Dell uses NIST 800-88 certified data destruction. Always advise customer to wipe data first.
+Incentives: Trade-in credits vary by device age/condition. $50 credit for laptops under 3 years old.
+Drop-off: Available at 1,500+ Best Buy stores and 2,000+ Staples locations. Ask for ZIP code.
+Business recycling: Asset Recovery Services for bulk. Certificate of Data Destruction provided.
+After recycling: Send confirmation email with reference number + recycling certificate as PDF.
+
+PERSONALITY:
+- Keep responses to 2-4 sentences. Use line breaks for readability. No markdown like ** or ##.
+- For damaged/wrong items and frustrated customers: lead with empathy always.
+- Never mention Claude or Anthropic. You are Dell's AI assistant.
+- End most responses with a follow-up question or offer.
+- For things outside your scope: apologise, explain limitation, offer to escalate.
+- Respond in plain text only. Clean line breaks where needed.`;
+
+  let messages = [];
+  let chatOpen = false;
+  let initialized = false;
+  let currentContext = '';
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    const heroes = {
+      'order-support': ['Home › Support › Orders', 'Order Support', 'Track shipments, manage returns, resolve billing issues and get help with your recent Dell orders.'],
+      'new-purchase': ['Home › Products', 'Find Your Perfect Dell', 'Browse the latest models, compare specs, shop by budget, and get AI-powered recommendations.'],
+      'warranty': ['Home › Support › Warranty', 'Warranty Services', 'Check your coverage status, compare renewal plans, and protect your Dell device.'],
+      'tech-support': ['Home › Support › Technical', 'Technical Support', 'Step-by-step troubleshooting for any Dell device issue — guided by AI, escalated to experts when needed.'],
+      'recycling': ['Home › Sustainability › Recycling', 'Recycle with Dell', 'Responsibly recycle your electronics, find drop-off locations, and earn trade-in credits.']
+    };
+    const h = heroes[tab];
+    document.getElementById('breadcrumb').textContent = h[0];
+    document.getElementById('hero-title').textContent = h[1];
+    document.getElementById('hero-desc').textContent = h[2];
+  }
+
+  function toggleChat() {
+    chatOpen = !chatOpen;
+    document.getElementById('chatWindow').classList.toggle('open', chatOpen);
+    document.getElementById('chatNotif').style.display = 'none';
+    if (chatOpen && !initialized) { initialized = true; initChat(); }
+  }
+
+  function openChat() { if (!chatOpen) toggleChat(); }
+
+  function openChatWith(text, context) {
+    currentContext = context || '';
+    const badge = document.getElementById('contextBadge');
+    if (currentContext) { badge.textContent = currentContext; badge.style.display = 'inline-block'; }
+    if (!chatOpen) {
+      chatOpen = true;
+      document.getElementById('chatWindow').classList.add('open');
+      document.getElementById('chatNotif').style.display = 'none';
+    }
+    if (!initialized) { initialized = true; initChat(text); }
+    else { document.getElementById('chatInput').value = text; sendMessage(); }
+  }
+
+  function initChat(prefill) {
+    addBotMessage("Hi there! 👋 I'm Dell's AI assistant.\n\nI can help you with all 5 support areas:\n📦 Order status, returns & billing\n🛍️ Finding & buying new products\n🛡️ Warranty status & renewal\n🔧 Technical troubleshooting\n♻️ Device recycling & trade-in\n\nWhat can I help you with today?", [
+      "Track my order","Find a new laptop","Check my warranty","Fix a tech issue","Recycle a device"
+    ]);
+    if (prefill) { setTimeout(() => { document.getElementById('chatInput').value = prefill; sendMessage(); }, 900); }
+  }
+
+  function getTime() { return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+
+  function addBotMessage(text, quickReplies) {
+    const body = document.getElementById('chatBody');
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;';
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg bot';
+    msgDiv.innerHTML = `<div class="msg-avatar">🤖</div><div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div></div>`;
+    wrap.appendChild(msgDiv);
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'msg-time';
+    timeDiv.style.marginLeft = '34px';
+    timeDiv.textContent = getTime();
+    wrap.appendChild(timeDiv);
+    if (quickReplies && quickReplies.length) {
+      const qr = document.createElement('div');
+      qr.className = 'quick-replies';
+      quickReplies.forEach(label => {
+        const btn = document.createElement('button');
+        btn.className = 'qr-btn';
+        btn.textContent = label;
+        btn.onclick = () => { qr.remove(); document.getElementById('chatInput').value = label; sendMessage(); };
+        qr.appendChild(btn);
+      });
+      wrap.appendChild(qr);
+    }
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function addUserMessage(text) {
+    const body = document.getElementById('chatBody');
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;';
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg user';
+    msgDiv.innerHTML = `<div class="msg-bubble">${text}</div>`;
+    wrap.appendChild(msgDiv);
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'msg-time';
+    timeDiv.textContent = getTime();
+    wrap.appendChild(timeDiv);
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function showTyping() {
+    const body = document.getElementById('chatBody');
+    const div = document.createElement('div');
+    div.className = 'typing'; div.id = 'typingIndicator';
+    div.innerHTML = `<div class="msg-avatar" style="width:26px;height:26px;background:#0076CE;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;">🤖</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function removeTyping() { const t = document.getElementById('typingIndicator'); if (t) t.remove(); }
+
+  function getSmartQRs(reply) {
+    const l = reply.toLowerCase();
+    if (l.includes('order number') || l.includes('order #')) return ['DEL-884521','DEL-871203','DEL-862990'];
+    if (l.includes('return reason') || (l.includes('reason') && l.includes('return'))) return ['Not as described','Damaged on arrival','Wrong item received','Changed my mind'];
+    if (l.includes('warranty plan') || l.includes('renewal plan')) return ['Basic Care - $49/yr','Premium Care Plus - $149/yr','Compare both plans'];
+    if (l.includes('zip') || l.includes('postcode') || l.includes('location')) return ['10001 - New York','60601 - Chicago','90001 - Los Angeles'];
+    if (l.includes('device type') || l.includes('type of device')) return ['Laptop','Desktop','Monitor','Printer'];
+    if (l.includes('use case') || l.includes('what will you use')) return ['Gaming','Business / Work','Student','Creative / Design'];
+    if (l.includes('budget') || l.includes('price range')) return ['Under $500','$500–$1000','$1000–$1500','$1500+'];
+    if (l.includes('confirm') || l.includes('did that') || l.includes('let me know')) return ['Yes, that worked ✓','No, still having issues'];
+    if (l.includes('anything else') || l.includes('help you with')) return ['Track an order','Tech support','Renew warranty','Recycle a device'];
+    if (l.includes('agent') || l.includes('connect') || l.includes('transfer')) return ['Yes, connect me now','No, keep chatting'];
+    return [];
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    input.style.height = 'auto';
+    addUserMessage(text);
+    messages.push({role:'user', content: text});
+    showTyping();
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1000, system: SYSTEM_PROMPT, messages: messages})
+      });
+      const data = await res.json();
+      const reply = data.content?.[0]?.text || "I'm sorry, something went wrong. Please try again.";
+      removeTyping();
+      messages.push({role:'assistant', content: reply});
+      addBotMessage(reply, getSmartQRs(reply));
+    } catch(e) {
+      removeTyping();
+      addBotMessage("I'm having trouble connecting right now. Please try again in a moment, or click below to speak with an agent.", ['Talk to an agent']);
+    }
+  }
+
+  function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+  function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 70) + 'px'; }
+</script>
+</body>
+</html>
